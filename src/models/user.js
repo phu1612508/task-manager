@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
+        unique: true,
         required: true,
         validate(value) {
             if (!validator.isEmail(value)) {
@@ -31,6 +32,18 @@ const userSchema = new mongoose.Schema({
     },
 });
 
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({
+        email: email
+    });
+    if (!user) throw new Error("Email isn't already exists");
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new Error("Email or password doesn't match");
+    // console.log(user);
+    return user;
+}
+
+
 userSchema.pre("save", async function (next) {
     const user = this;
     if (user.isModified('password')) {
@@ -38,6 +51,6 @@ userSchema.pre("save", async function (next) {
     }
     next();
 })
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);;
 
 module.exports = User;
