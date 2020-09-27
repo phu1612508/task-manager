@@ -76,20 +76,20 @@ app.get("/tasks/:id", async (req, res) => {
 
 app.patch("/users/:id", async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'password', 'email', 'age'];
+  const allowedUpdates = ["name", "password", "email", "age"];
   const isValidOperation = updates.every((update) => {
     return allowedUpdates.includes(update);
   });
   if (!isValidOperation) {
     return res.status(400).send({
-      error: 'Invalid updates'
+      error: "Invalid updates",
     });
   }
   try {
     const _id = req.params.id;
     const user = await User.findByIdAndUpdate(_id, req.body, {
       new: true,
-      runValidators: true
+      runValidators: true,
     });
     if (!user) {
       return res.status(404).send();
@@ -98,24 +98,24 @@ app.patch("/users/:id", async (req, res) => {
   } catch (err) {
     res.status(400).send(err);
   }
-})
+});
 
 app.patch("/tasks/:id", async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['description', 'completed'];
+  const allowedUpdates = ["description", "completed"];
   const isValidOperation = updates.every((update) => {
     return allowedUpdates.includes(update);
   });
   if (!isValidOperation) {
     return res.status(400).send({
-      error: 'Invalid updates'
+      error: "Invalid updates",
     });
   }
   try {
     const _id = req.params.id;
     const task = await Task.findByIdAndUpdate(_id, req.body, {
       new: true,
-      runValidators: true
+      runValidators: true,
     });
     if (!task) {
       return res.status(404).send();
@@ -126,6 +126,31 @@ app.patch("/tasks/:id", async (req, res) => {
   }
 });
 
+app.delete("/users/:id", async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const user = await User.findByIdAndDelete(_id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.send(user);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+app.delete("/tasks/:id",async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const task= await Task.findByIdAndDelete(_id);
+    if (!task) {
+      return res.status(404).send();
+    }
+    res.send(task);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+})
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server was started on port ${port}`);
