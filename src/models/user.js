@@ -44,6 +44,13 @@ const userSchema = new mongoose.Schema({
         }
     }]
 });
+
+userSchema.virtual("tasks",{
+    ref:"Task",
+    localField:"_id",
+    foreignField:"owner"
+})
+
 const privateKey = `MIICXgIBAAKBgQCHYw4zQtMKbyr3Fh4aahIY/Y7eDsCef91UvxMU1RLEhLZl1Ojt
 avSjLOslK6Y6wFbjW4pjvJVBf02QeoROVXceG5IziwbeZSeOVTt0pFeZXiY3fEF5
 Fw9Tbmt0zUHI2pzU6APLjrYJhbx5jslcVh11VOeeAP2P7jkXgqCj9PoO+wIDAQAB
